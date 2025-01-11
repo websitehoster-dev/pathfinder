@@ -1,8 +1,6 @@
 #include <Portals.hpp>
 #include <Player.hpp>
 
-#ifndef DEMO
-
 SpeedPortal::SpeedPortal(Vec2D size, std::unordered_map<int, std::string>&& fields) : EffectObject(size, std::move(fields)) {
 	switch (atoi(fields[1].c_str())) {
 		case 200:
@@ -29,4 +27,3 @@ void SpeedPortal::collide(Player& p) const {
 
 	p.speed = speed;
 }
-#endif

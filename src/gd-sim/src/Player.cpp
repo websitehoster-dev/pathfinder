@@ -14,7 +14,7 @@ Entity Player::unrotatedHitbox() const {
 
 void Player::setVelocity(double v, bool override) {
 	velocityOverride = override;
-	velocity = v DEMO_NONE(* (small ? 0.8 : 1));
+	velocity = v * (small ? 0.8 : 1);
 
 	if (v != 0)
 		grounded = false;
@@ -59,11 +59,9 @@ void Player::preCollision(bool pressed) {
 		i(*this);
 	actions.clear();
 
-	#ifndef DEMO
 	if (slopeData.slope && slopeData.slope->orientation == 1) {
 		grounded = true;
 	}
-	#endif
 }
 
 bool unaltered(Player const& p) {
@@ -71,11 +69,9 @@ bool unaltered(Player const& p) {
 }
 
 void Player::postCollision() {
-	#ifndef DEMO
 	if (small != prevPlayer().small) {
 		size = small ? (size * 0.6) : (size / 0.6);
 	}
-	#endif
 
 	if (gravBottom(*this) <= gravFloor() && !velocityOverride && velocity <= 0 ) {
 		pos.y = grav(gravFloor()) + grav(size.y / 2);
@@ -121,10 +117,8 @@ void Player::postCollision() {
 	if (!(vehicle.type == VehicleType::Ball && input == false && prevPlayer().input == true && button == true))
 		velocity = roundVel(velocity, upsideDown);
 
-	#ifndef DEMO
 	if (slopeData.slope)
 		slopeData.slope->calc(*this);
-	#endif
 
 	vehicle.clamp(*this);
 }
@@ -135,8 +129,8 @@ Player::Player() :
 	ceiling(999999), floor(0), grounded(true),
 	coyoteFrames(0), acceleration(0), velocity(0),
 	velocityOverride(false), button(false), input(false),
-	vehicleBuffer(false), upsideDown(false), DEMO_NONE(small(false) COMMA)
-	speed(1) DEMO_NONE(COMMA slopeData({{}, 0, false})) {}
+	vehicleBuffer(false), upsideDown(false), small(false),
+	speed(1), slopeData({{}, 0, false}) {}
 
 
 

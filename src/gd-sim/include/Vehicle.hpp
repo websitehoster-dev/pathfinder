@@ -6,10 +6,8 @@ enum class VehicleType {
 	Cube,
 	Ship,
 	Ball,
-	#ifndef DEMO
 	Ufo,
-	Wave,
-	#endif
+	Wave
 };
 
 struct Player;

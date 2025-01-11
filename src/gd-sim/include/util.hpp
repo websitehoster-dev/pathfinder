@@ -113,17 +113,6 @@ inline float stod_def(std::string const& str, float def = 0) {
     }
 }
 
-#define COMMA ,
-
-#ifndef DEMO
-#define DEMO_NONE(x) x
-#define DEMO_0(x) x
-#else
-#define DEMO_NONE(x)
-#define DEMO_0(x) 0
-#endif
-
-
 struct Vec2D {
     float x;
     float y;

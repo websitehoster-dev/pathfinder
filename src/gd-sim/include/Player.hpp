@@ -1,4 +1,6 @@
 #pragma once
+
+#undef small
 #include <util.hpp>
 #include <Vehicle.hpp>
 #include <Slope.hpp>
@@ -7,10 +9,10 @@
 #include <optional>
 
 inline double player_speeds[4] = {
-	DEMO_0(251.16007972276924),
+	251.16007972276924,
 	311.580093712804,
-	DEMO_NONE(387.42014039710523 COMMA)
-	DEMO_NONE(468.0001388338566 COMMA)
+	387.42014039710523,
+	468.0001388338566
 };
 
 struct Object;
@@ -41,7 +43,7 @@ struct Player : public Entity {
 	bool vehicleBuffer; // When buffering a click when transitioning to a vehicle
 
 	bool upsideDown;
-	DEMO_NONE(bool small;)
+	bool small;
 
 	bool gravityPortal; // some vehicles have weird edge cases
 
@@ -55,13 +57,11 @@ struct Player : public Entity {
 		int playerFrame = 0;
 	} snapData;
 
-	#ifndef DEMO
 	struct {
 		std::optional<Slope> slope;
 		double elapsed;
 		bool snapDown; // downhill slopes, approaching with >0 velocity.
 	} slopeData;
-	#endif
 
 	Player();
 

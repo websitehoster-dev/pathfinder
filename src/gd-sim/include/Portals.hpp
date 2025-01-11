@@ -14,7 +14,6 @@ struct GravityPortal : public EffectObject {
     void collide(Player&) const override;
 };
 
-#ifndef DEMO
 struct SizePortal : public EffectObject {
     bool small;
     SizePortal(Vec2D size, std::unordered_map<int, std::string>&& fields);
@@ -26,4 +25,3 @@ struct SpeedPortal : public EffectObject {
     SpeedPortal(Vec2D size, std::unordered_map<int, std::string>&& fields);
     void collide(Player&) const override;
 };
-#endif

@@ -5,7 +5,7 @@
 Hazard::Hazard(Vec2D size, std::unordered_map<int, std::string>&& fields) : Object(size, std::move(fields)) {
 	prio = 2;
 }
-#ifndef DEMO
+
 Sawblade::Sawblade(Vec2D size, std::unordered_map<int, std::string>&& fields) : Hazard(size, std::move(fields)) {}
 
 
@@ -34,7 +34,6 @@ bool Sawblade::touching(Player const& p) const {
 
 	return false;
 }
-#endif
 
 void Hazard::collide(Player& p) const {
 	p.dead = true;

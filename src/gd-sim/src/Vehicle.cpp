@@ -32,10 +32,10 @@ Vehicle cube() {
 
 	v.update = +[](Player& p) {
 		static double accelerations[] = {
-			DEMO_0(-2747.52),
+			-2747.52,
 			-2794.1082, 
-			DEMO_NONE(-2786.4 COMMA)
-			DEMO_NONE(-2799.36)
+			-2786.4,
+			-2799.36
 		};
 		p.acceleration = accelerations[p.speed];
 
@@ -67,13 +67,12 @@ Vehicle cube() {
 
 		if (jump) {
 			static double jumpHeights[] = {
-				DEMO_0(573.48),
+				573.48,
 				603.72,
-				DEMO_NONE(616.68 COMMA)
-				DEMO_NONE(606.42)
+				616.68,
+				606.42,
 			};
 
-			#ifndef DEMO
 			if (p.slopeData.slope && p.slopeData.slope->orientation == 0) {
 				auto time = std::clamp(10 * (p.timeElapsed - p.slopeData.elapsed), 0.4, 1.0);
 
@@ -88,9 +87,6 @@ Vehicle cube() {
 
 				p.velocity = std::floor(1000 * p.velocity / 54.) * 54 / 1000.;
 				p.grounded = false;
-			#else
-			if (0) {
-			#endif
 			} else {
 				p.setVelocity(jumpHeights[p.speed], p.prevPlayer().input);
 				p.grounded = false;
@@ -107,11 +103,9 @@ Vehicle ship() {
 
 	v.enter = +[](Player& p, Object const* o, bool n) {
 		if (n) {
-			#ifndef DEMO
 			if (p.prevPlayer().vehicle.type == VehicleType::Ufo || p.prevPlayer().vehicle.type == VehicleType::Wave)
 				p.velocity = p.velocity / 4.0;
 			else 
-			#endif
 				p.velocity = p.velocity / 2.0;
 		}
 
@@ -122,8 +116,8 @@ Vehicle ship() {
 	v.clamp = +[](Player& p) {
 		p.buffer = false;
 		p.velocity = std::clamp(p.velocity, 
-			DEMO_NONE(p.small ? -406.566 :) -345.6,
-			DEMO_NONE(p.small ? 508.248 :) 432.0
+			p.small ? -406.566 : -345.6,
+			p.small ? 508.248 : 432.0
 		);
 
 		if (p.gravTop(p) > p.gravCeiling()) {
@@ -144,14 +138,14 @@ Vehicle ship() {
 
 		if (p.input) {
 			if (p.velocity <= p.grav(103.485492))
-				p.acceleration = DEMO_NONE(p.small ? 1643.5872 :) 1397.0491;
+				p.acceleration = p.small ? 1643.5872 : 1397.0491;
 			else
-				p.acceleration = DEMO_NONE(p.small ? 1314.86976 :) 1117.64328;
+				p.acceleration = p.small ? 1314.86976 : 1117.64328;
 		} else {
 			if (p.velocity >= p.grav(103.485492))
-				p.acceleration = DEMO_NONE(p.small ? -1577.85408 :) -1341.1719;
+				p.acceleration = p.small ? -1577.85408 : -1341.1719;
 			else
-				p.acceleration = DEMO_NONE(p.small ? -1051.8984 :) -894.11464;
+				p.acceleration = p.small ? -1051.8984 : -894.11464;
 		}
 
 		if (p.grav(p.pos.y) >= p.gravCeiling()) {
@@ -186,7 +180,7 @@ Vehicle ball() {
 
 			switch (p.prevPlayer().vehicle.type) {
 				case VehicleType::Ship:
-				DEMO_NONE(case VehicleType::Ufo:)
+				case VehicleType::Ufo:
 					p.velocity = p.velocity / 2;
 					break;
 				default: break;
@@ -219,10 +213,10 @@ Vehicle ball() {
 
 		if (jump) {
 			static double jumpHeights[] = {
-				DEMO_0(-172.044007),
+				-172.044007,
 				-181.11601,
-				DEMO_NONE(-185.00401 COMMA)
-				DEMO_NONE(-181.92601 COMMA)
+				-185.00401,
+				-181.92601
 			};
 
 			p.upsideDown = !p.upsideDown;
@@ -236,7 +230,6 @@ Vehicle ball() {
 	return v;
 }
 
-#ifndef DEMO
 Vehicle ufo() {
 	Vehicle v;
 
@@ -321,7 +314,6 @@ Vehicle wave() {
 
 	return v;
 }
-#endif
 
 Vehicle Vehicle::from(VehicleType v) {
 	switch (v) {
@@ -331,11 +323,9 @@ Vehicle Vehicle::from(VehicleType v) {
 			return ship();
 		case VehicleType::Ball:
 			return ball();
-		#ifndef DEMO
 		case VehicleType::Ufo:
 			return ufo();
 		case VehicleType::Wave:
 			return wave();
-		#endif
 	}
 }

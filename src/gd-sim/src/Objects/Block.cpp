@@ -11,11 +11,9 @@ Block::Block(Vec2D s, std::unordered_map<int, std::string>&& fields) : Object(s,
 		size = {size.y, size.x};
 	rotation = 0;
 
-	#ifndef DEMO
 	if (fields[1] == "468" && size.y == 5) {
 		size.y -= 3.5;
 	}
-	#endif
 }
 
 
@@ -27,24 +25,18 @@ enum class SnapType {
 };
 
 SnapType snapType(Vec2D const& diff, Player const& p) {
-	#ifndef DEMO
 	if (p.speed == 0 && !p.small) {
 		if (diff == Vec2D(90, 30)) return SnapType::LittleStair;
 	} else if (p.speed == 1) {
-	#endif
-
-		if (diff == Vec2D(90, DEMO_NONE(p.small ? 30 :) 60)) return SnapType::BigStair;
-		if (diff == Vec2D(120, 30) DEMO_NONE(&& !p.small)) return SnapType::LittleStair;
+		if (diff == Vec2D(90, p.small ? 30 : 60)) return SnapType::BigStair;
+		if (diff == Vec2D(120, 30) && !p.small) return SnapType::LittleStair;
 		if (diff == Vec2D(150, -30)) return SnapType::DownStair;
-
-	#ifndef DEMO
 	} else if (p.speed == 2 && !p.small) {
 		if (diff == Vec2D(120, 60)) return SnapType::BigStair;
 		if (diff == Vec2D(150, 30)) return SnapType::LittleStair;
 	} else if (p.speed == 3 && !p.small) {
 		if (diff == Vec2D(210, -30)) return SnapType::DownStair;
 	}
-	#endif
 
 	return SnapType::None;
 }
@@ -57,7 +49,7 @@ void trySnap(Block const& b, Player& p) {
 	auto snapPlayer = p.level->getState(snapData.playerFrame);
 
 	auto held = snapPlayer.input;
-	DEMO_NONE(bool small = snapPlayer.small;)
+	bool small = snapPlayer.small;
 	bool onEdge = 
 		(snapPlayer.getRight() - snapData.object.getLeft() < 1) || 
 		(snapPlayer.nextPlayer()->getLeft() - snapData.object.getRight() > -1);
@@ -66,7 +58,7 @@ void trySnap(Block const& b, Player& p) {
 
 	switch (snapType(diff, p)) {
 		case SnapType::BigStair:
-			if ((DEMO_NONE(!small &&) held) || onEdge) 
+			if ((!small && held) || onEdge) 
 				p.pos.x = samePos;
 			else {
 				p.pos.x += p.speed;
@@ -86,7 +78,7 @@ void trySnap(Block const& b, Player& p) {
 			}
 			break;
 		case SnapType::DownStair:
-			if (held && DEMO_NONE(!small &&) p.speed < 3)
+			if (held && !small && p.speed < 3)
 				p.pos.x = samePos;
 			else {
 				if (p.speed < 2)
@@ -101,20 +93,18 @@ void trySnap(Block const& b, Player& p) {
 }
 
 void Block::collide(Player& p) const {
-	int clip = (DEMO_NONE(p.vehicle.type == VehicleType::Ufo ||) p.vehicle.type == VehicleType::Ship) ? 7 : 10;
+	int clip = (p.vehicle.type == VehicleType::Ufo || p.vehicle.type == VehicleType::Ship) ? 7 : 10;
 
 	if (p.upsideDown != p.prevPlayer().upsideDown && !p.gravityPortal)
 		return;
 
 	double bottom = p.gravBottom(p);
-	#ifndef DEMO
 	if (p.slopeData.slope) {
 		bottom = bottom + sin(p.slopeData.slope->angle()) * p.size.y / 2;
 		clip = 7;
 		if (p.gravTop(*this) - bottom < 2)
 			return;
 	}
-	#endif
 
 	if (p.innerHitbox().intersects(*this)) {
 		p.dead = true;
@@ -132,7 +122,7 @@ void Block::collide(Player& p) const {
 			p.snapData.object = *this;
 		}
 	} else {
-		if (p.vehicle.type == VehicleType::Ship DEMO_NONE(|| p.vehicle.type == VehicleType::Ufo)) {
+		if (p.vehicle.type == VehicleType::Ship || p.vehicle.type == VehicleType::Ufo) {
 			if (p.gravTop(p) - p.gravBottom(*this) <= clip && p.velocity > 0) {
 				p.pos.y = p.grav(p.gravBottom(*this)) - p.grav(p.size.y / 2);
 				p.velocity = 0;

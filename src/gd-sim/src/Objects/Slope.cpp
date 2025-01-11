@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <Player.hpp>
 
-#ifndef DEMO
+
 Slope::Slope(Vec2D size, std::unordered_map<int, std::string>&& fields) : Block(size, std::move(fields)) {
 	auto rot = stod_def(fields[6].c_str());
 
@@ -191,5 +191,3 @@ bool Slope::touching(Player const& p) const {
 			return false;
 	}
 }
-
-#endif

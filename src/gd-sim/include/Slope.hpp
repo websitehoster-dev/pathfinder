@@ -1,7 +1,6 @@
 #pragma once
 #include <Block.hpp>
 
-#ifndef DEMO
 struct Slope : public Block {
     int orientation;
 	
@@ -14,4 +13,3 @@ struct Slope : public Block {
     double angle() const;
     double expectedY(Player const& p) const;
 };
-#endif

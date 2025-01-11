@@ -1,7 +1,6 @@
 #include <Block.hpp>
 #include <Player.hpp>
 
-#ifndef DEMO
 bool BreakableBlock::touching(Player const& p) const {
 	if (Block::touching(p)) {
 		return !p.usedEffects.contains(id);
@@ -30,4 +29,3 @@ void BreakableBlock::collide(Player& p) const {
 		p.usedEffects.insert(id);
 	}
 }
-#endif

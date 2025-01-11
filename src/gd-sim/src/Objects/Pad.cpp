@@ -25,21 +25,6 @@ Pad::Pad(Vec2D size, std::unordered_map<int, std::string>&& fields) : EffectObje
 	}
 }
 
-#ifdef DEMO
-const velocity_map<PadType, VehicleType> pad_velocities = {
-	{{PadType::Yellow, VehicleType::Cube}, {0, 864}},
-	{{PadType::Yellow, VehicleType::Ship}, {0, 432}},
-	{{PadType::Yellow, VehicleType::Ball}, {0, 518.4}},
-
-	{{PadType::Blue, VehicleType::Cube},   {0, -345.6}},
-	{{PadType::Blue, VehicleType::Ship},   {0, -345.6}},
-	{{PadType::Blue, VehicleType::Ball},   {0, -207.36001}},
-
-	{{PadType::Pink, VehicleType::Cube},   {0, 561.6}},
-	{{PadType::Pink, VehicleType::Ship},   {0, 302.4}},
-	{{PadType::Pink, VehicleType::Ball},   {0, 362.88001}}
-};
-#else
 const velocity_map<PadType, VehicleType, bool> pad_velocities = {
 	{{PadType::Yellow, VehicleType::Cube, false}, {864,         864,        864}},
 	{{PadType::Yellow, VehicleType::Cube, true},  {691.2,       691.2,      691.2}},
@@ -79,7 +64,6 @@ const velocity_map<PadType, VehicleType, bool> pad_velocities = {
 	{{PadType::Pink, VehicleType::Ufo, false},    {345.6,      345.6,      345.6}},
 	{{PadType::Pink, VehicleType::Ufo, true},     {276.48,     276.48,     276.48}}
 };
-#endif
 
 void Pad::collide(Player& p) const {
 	if (type == PadType::Blue) {

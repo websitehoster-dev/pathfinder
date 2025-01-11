@@ -9,9 +9,9 @@ Orb::Orb(Vec2D size, std::unordered_map<int, std::string>&& fields) : EffectObje
 		case 84:
 			type = OrbType::Blue;
 			break;
-		DEMO_NONE(case 141:
+		case 141:
 			type = OrbType::Pink;
-			break;)
+			break;
 		default:
 			type = OrbType::Yellow;
 			break;
@@ -22,17 +22,6 @@ bool Orb::touching(Player const& p) const {
 	return EffectObject::touching(p) || EffectObject::touching(p.prevPlayer());
 }
 
-#ifdef DEMO
-const velocity_map<OrbType, VehicleType> orb_velocities = {
-	{{OrbType::Yellow, VehicleType::Cube}, {0, 603.72}},
-	{{OrbType::Yellow, VehicleType::Ship}, {0, 603.72}},
-	{{OrbType::Yellow, VehicleType::Ball}, {0, 422.60399}},
-
-	{{OrbType::Blue, VehicleType::Cube},   {0, -241.488}},
-	{{OrbType::Blue, VehicleType::Ship},   {0, -241.488}},
-	{{OrbType::Blue, VehicleType::Ball},   {0, -169.04160}},
-};
-#else
 const velocity_map<OrbType, VehicleType, bool> orb_velocities = {
 	{{OrbType::Yellow, VehicleType::Cube, false}, {573.48,      603.72,     616.68,    606.42}},
 	{{OrbType::Yellow, VehicleType::Cube, true},  {458.784,     482.976,    481.734,   485.136}},
@@ -72,7 +61,6 @@ const velocity_map<OrbType, VehicleType, bool> orb_velocities = {
 	{{OrbType::Pink, VehicleType::Ufo, false},    {240.84,      253.584,    258.984,   254.718}},
 	{{OrbType::Pink, VehicleType::Ufo, true},     {192.672,     202.824,    207.198,   203.742}}
 };
-#endif
 
 void Orb::collide(Player& p) const {
 	if (p.buffer || (p.prevPlayer().buffer && !p.button) || (p.vehicle.type == VehicleType::Ball && p.vehicleBuffer)) {
@@ -81,8 +69,8 @@ void Orb::collide(Player& p) const {
 
 		EffectObject::collide(p);
 
-		DEMO_NONE(if (p.vehicle.type != VehicleType::Wave)) {
-			p.velocity = orb_velocities.get(type, p.vehicle.type, DEMO_NONE(p.small COMMA) p.speed);
+		if (p.vehicle.type != VehicleType::Wave) {
+			p.velocity = orb_velocities.get(type, p.vehicle.type, p.small , p.speed);
 			p.grounded = false;
 		}
 

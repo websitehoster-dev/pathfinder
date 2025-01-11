@@ -95,7 +95,6 @@ std::optional<ObjectContainer> Object::create(std::unordered_map<int, std::strin
 	objs(({ 919 }), Hazard, 25, 6)
 	objs(({ 179 }), Hazard, 4, 8)
 
-	#ifndef DEMO
 	objs(({ 399, 1710 }), Sawblade, 12.900001, 12.900001)
 	objs(({ 187, 741 }), Sawblade, 21.960001, 21.960001)
 	objs(({ 88, 186, 740, 1705 }), Sawblade, 32.3, 32.3)
@@ -119,17 +118,15 @@ std::optional<ObjectContainer> Object::create(std::unordered_map<int, std::strin
 	objs(({ 1734 }), Sawblade, 32, 32)
 	objs(({ 918 }), Sawblade, 24, 24)
 	objs(({ 98 }), Sawblade, 12, 12)
-	#endif
 
 	objs(({ 35 }), Pad, 25, 4)
 	objs(({ 140 }), Pad, 25, 5)
 	objs(({ 67 }), Pad, 25, 6)
-	objs(({ 36, 84, DEMO_NONE(141) }), Orb, 36, 36)
+	objs(({ 36, 84, 141 }), Orb, 36, 36)
 
-	objs(({ 12, 13, 47, DEMO_NONE(111 COMMA 660) }), VehiclePortal, 34, 86)
+	objs(({ 12, 13, 47, 111 , 660 }), VehiclePortal, 34, 86)
 	objs(({ 10, 11 }), GravityPortal, 25, 75)
 
-	#ifndef DEMO
 	objs(({ 99, 101 }), SizePortal, 31, 90)
 
 	objs(({ 143 }), BreakableBlock, 30, 30)
@@ -153,8 +150,6 @@ std::optional<ObjectContainer> Object::create(std::unordered_map<int, std::strin
 		674, 710, 712, 727, 729, 887, 1339, 1342, 1345,
 		1718, 1724, 1744, 1746, 1748, 1750, 1907
 	}), Slope, 60, 30)
-
-	#endif
 
 	return {};
 }
