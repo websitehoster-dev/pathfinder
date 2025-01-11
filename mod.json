@@ -1,0 +1,26 @@
+{
+	"geode": "4.1.2",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "camila314.pathfinder",
+	"name": "pathfinder",
+	"version": "v1.0.0",
+	"developer": "camila314",
+	"description": "Beat levels automatically!",
+    "resources": {
+        "sprites": [
+            "pathfinder.png"
+        ]
+    },
+    "dependencies": [
+    	{
+    		"id": "geode.node-ids",
+    		"version": ">=v1.18.0",
+    		"importance": "required"
+    	}
+    ]
+}

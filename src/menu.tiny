@@ -1,0 +1,20 @@
+func menu() {
+	Scale9Sprite(250.0, 140.0, "GJ_square04.png")
+		->pos(0.0, 0.0)
+		->z(-1)
+
+	Label("Pathfinding...", "bigFont.fnt")
+		->pos(0.0, 50.0)
+		->scale(0.8)
+
+	Label("0.00%", "chatFont.fnt")
+		->ypos(10.0)
+		->id("percent")
+
+	Button(ButtonSprite("Cancel", "GJ_button_04.png"), "onCancel")
+		->ypos(-40.0)
+}
+func onCancel() {
+	stopPathfind()
+	terminate()
+}
