@@ -27,5 +27,9 @@
       "pathfinder.png"
     ]
   },
-  "description": "Beat levels automatically!"
+  "description": "Beat levels automatically!",
+  "tags": ["offline", "gameplay", "utility"],
+  "issues": {
+    "url": "https://discord.gg/u9m7kqyqxu"
+  }
 }
