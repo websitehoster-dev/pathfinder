@@ -1,26 +1,31 @@
 {
-	"geode": "4.1.2",
-	"gd": {
-		"win": "2.2074",
-		"android": "2.2074",
-		"mac": "2.2074",
-		"ios": "2.2074"
-	},
-	"id": "camila314.pathfinder",
-	"name": "pathfinder",
-	"version": "v1.0.0",
-	"developer": "camila314",
-	"description": "Beat levels automatically!",
-    "resources": {
-        "sprites": [
-            "pathfinder.png"
-        ]
+  "id": "camila314.pathfinder",
+  "gd": {
+    "win": "2.2074",
+    "android": "2.2074",
+    "mac": "2.2074",
+    "ios": "2.2074"
+  },
+  "geode": "4.1.2",
+  "name": "pathfinder",
+  "developer": "camila314",
+  "version": "v1.0.0",
+  "dependencies": [
+    {
+      "id": "geode.node-ids",
+      "version": ">=v1.18.0",
+      "importance": "required"
     },
-    "dependencies": [
-    	{
-    		"id": "geode.node-ids",
-    		"version": ">=v1.18.0",
-    		"importance": "required"
-    	}
+    {
+      "id": "eclipse.eclipse-menu",
+      "importance": "recommended",
+      "version": ">=v1.0.0-beta.4"
+    }
+  ],
+  "resources": {
+    "sprites": [
+      "pathfinder.png"
     ]
+  },
+  "description": "Beat levels automatically!"
 }

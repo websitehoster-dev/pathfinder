@@ -1,6 +1,6 @@
 # Pathfinder
 
-Auto-generate macros for levels using simulation!
+Auto-generate macros for levels using simulation! This mod uses a physics simulator under the hood to solve levels in seconds! It does not come with a bot, you will need to install one for this.
 
 # ONLY SUPPORTS 1.7 LEVELS
 ### None of these are supported
