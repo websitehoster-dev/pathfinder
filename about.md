@@ -20,4 +20,4 @@ Auto-generate macros for levels using simulation! This mod uses a physics simula
 
 # Report Bugs
 
-Any simulation bugs need to be reported in the [Discord](https://discord.gg/gMzfAYPS)
+Any simulation bugs need to be reported in the [Discord](https://discord.gg/u9m7kqyqxu)

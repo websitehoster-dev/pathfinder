@@ -42,6 +42,10 @@ public:
                     saveDir = Loader::get()->getLoadedMod("eclipse.eclipse-menu")->getSaveDir() / "replays";
                 }
 
+                if (!exists(saveDir)) {
+                    create_directories(saveDir);
+                }
+
                 pick(PickMode::SaveFile, {
                     saveDir / fmt::format("{}.gdr", m_levelName),
                     {{

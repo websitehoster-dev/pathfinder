@@ -3,9 +3,6 @@
 #include <random>
 #include <gdr/gdr.hpp>
 #include "pathfinder.hpp"
-#include <Geode/Geode.hpp>
-
-using namespace geode::prelude;
 
 class Replay2 : public gdr::Replay<Replay2, gdr::Input> {
  public:
@@ -57,7 +54,6 @@ int tryInputs(Level2& lvl, std::set<uint16_t> inputs) {
 }
 
 std::vector<uint8_t> pathfind(std::string const& lvlString, std::atomic_bool& stop, std::function<void(double)> callback) {
-	log::info("str: {}", lvlString);
 	Level2 lvl(lvlString);
 
 	std::random_device rd;

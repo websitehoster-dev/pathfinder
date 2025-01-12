@@ -9,6 +9,7 @@ project(pathfinder VERSION 1.0.0)
 add_library(${PROJECT_NAME} SHARED
     src/main.cpp
     src/pathfinder.cpp
+    $<$<CONFIG:Debug>:src/debug.cpp>
     # Add any extra C++ source files here
 )
 
@@ -19,17 +20,19 @@ else()
 endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
-add_subdirectory(src/gd-sim)
+add_subdirectory(gd-sim)
 
 CPMAddPackage("gh:camila314/UIBuilder#main")
 CPMAddPackage("gh:camila314/TinyGeode#main")
 CPMAddPackage("gh:maxnut/GDReplayFormat#main")
 
 # add custom target to strip binary
-#add_custom_target(strip ALL
-#    COMMAND strip -x $<TARGET_FILE:${PROJECT_NAME}>
-#    DEPENDS ${PROJECT_NAME}
-#)
+if (APPLE)
+add_custom_target(strip ALL
+    COMMAND $<$<CONFIG:Debug>:echo> strip -x $<TARGET_FILE:${PROJECT_NAME}>
+    DEPENDS ${PROJECT_NAME}
+)
+endif()
 
 
 setup_geode_mod(${PROJECT_NAME})
