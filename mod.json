@@ -7,9 +7,9 @@
 		"ios": "2.2074"
 	},
 	"geode": "4.1.2",
-	"name": "pathfinder",
+	"name": "Pathfinder",
 	"developer": "camila314",
-	"version": "v1.0.0-beta.4",
+	"version": "v1.0.0-beta.17",
 	"dependencies": [
 		{
 			"id": "geode.node-ids",
