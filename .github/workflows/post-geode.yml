@@ -9,8 +9,6 @@ jobs:
       actions: read
       contents: write
 
-    outputs:
-      download_url: ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }}
     name: Upload to Geode Index
     runs-on: ubuntu-latest
 
