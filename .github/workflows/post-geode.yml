@@ -31,7 +31,7 @@ jobs:
 
       - name: Setup Login with Geode
         run: |
-          mkdir ~/.local/share/Geode
+          mkdir -p ~/.local/share/Geode
           echo '{"profiles":[]}' > ~/.local/share/Geode/config.json
           geode config set index-token ${{ secrets.GEODE_TOKEN }}
 
