@@ -32,7 +32,7 @@ jobs:
       - name: Setup Login with Geode
         run: |
           mkdir -p ~/.local/share/Geode
-          echo '{"profiles":[]}' > ~/.local/share/Geode/config.json
+          echo '{"profiles":[{"name":"test","gd-path":"/","platform":""}]}' > ~/.local/share/Geode/config.json
           geode config set index-token ${{ secrets.GEODE_TOKEN }}
 
       - name: Create GitHub Release
