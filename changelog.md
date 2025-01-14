@@ -1,3 +1,7 @@
-# beta 1-4
+# beta 17
+- Fix bug where export doesn't show up
+
+# beta 1-16
 - Initial Release
-- Whoever designed the Geode Index Backend needs to redesign it because tell me why its so inflexible i have to push out an update to everyone just to relocate the file
+- geode index does not allow for link transfers without updating the entire mod (and therefore pushing a new update to everyone)
+- this is not a new version. it is the same version. the geode index people do not like flexibility (?) 

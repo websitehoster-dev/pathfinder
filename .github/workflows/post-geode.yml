@@ -1,0 +1,29 @@
+name: Upload to Geode Index
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    name: Upload to Geode Index
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Build Output
+
+      - name: Get Mod Version
+        run: echo "echo MOD_VERSION=$(cat mod.json | jq -r .version)" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Build Output/*
+          body_path: Changelog.md
+          body: Automatic update to ${{ env.MOD_VERSION }}.
+          tag_name: ${{ env.MOD_VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
