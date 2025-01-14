@@ -13,11 +13,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: dawidd6/action-download-artifact@v7
         with:
           workflow: multi-platform.yml
           name: Build Output
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get Mod Version
         run: echo "echo MOD_VERSION=$(cat mod.json | jq -r .version)" >> $GITHUB_ENV
