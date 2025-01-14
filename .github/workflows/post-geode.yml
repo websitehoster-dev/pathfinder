@@ -5,6 +5,7 @@ on:
 
 jobs:
   upload:
+    permissions: read-all
     name: Upload to Geode Index
     runs-on: ubuntu-latest
 
