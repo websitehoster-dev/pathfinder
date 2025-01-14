@@ -37,4 +37,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test
-        run: echo ${{ fromJSON(steps.create_release.outputs.assets) }} 
+        run: echo ${{ steps.create_release.outputs.assets }} 
