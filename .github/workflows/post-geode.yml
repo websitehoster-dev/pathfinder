@@ -30,7 +30,10 @@ jobs:
         uses: geode-sdk/cli/.github/actions/setup@main
 
       - name: Setup Login with Geode
-        run: geode config set index-token ${{ secrets.GEODE_TOKEN }}
+        run: |
+          mkdir ~/.local/share/Geode
+          echo '{"profiles":[]}' > ~/.local/share/Geode/config.json
+          geode config set index-token ${{ secrets.GEODE_TOKEN }}
 
       - name: Create GitHub Release
         id: create_release
