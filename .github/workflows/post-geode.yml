@@ -19,7 +19,7 @@ jobs:
         with:
           workflow: multi-platform.yml
           name: Build Output
-          token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./BuildOutput
 
       - name: Set Up Values
         run: |
@@ -27,10 +27,14 @@ jobs:
           echo "CHANGELOG=$(awk 'BEGIN { in_section = 0 } ; /^#.+/ { if (in_section) exit; next } ; /./ { in_section = 1; print }' changelog.md || echo Automatic update to $MOD_VERSION)" >> $GITHUB_ENV
 
       - name: Create GitHub Release
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          files: Build Output/*
+          files: BuildOutput/*
           body: ${{ env.CHANGELOG }}
           tag_name: ${{ env.MOD_VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test
+        run: echo ${{ fromJSON(steps.create_release.outputs.assets) }} 
