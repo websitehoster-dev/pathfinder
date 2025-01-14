@@ -4,11 +4,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  upload:
+  release:
     permissions:
       actions: read
       contents: write
 
+    outputs:
+      download_url: ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }}
     name: Upload to Geode Index
     runs-on: ubuntu-latest
 
@@ -26,6 +28,12 @@ jobs:
           echo "MOD_VERSION=$(cat mod.json | jq -r .version)" >> $GITHUB_ENV
           echo "CHANGELOG=$(awk 'BEGIN { in_section = 0 } ; /^#.+/ { if (in_section) exit; next } ; /./ { in_section = 1; print }' changelog.md || echo Automatic update to $MOD_VERSION)" >> $GITHUB_ENV
 
+      - name: Setup CLI
+        uses: geode-sdk/cli/.github/actions/setup@main
+
+      - name: Setup Login with Geode
+        run: geode config set index-token ${{ secrets.GEODE_TOKEN }}
+
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -33,8 +41,12 @@ jobs:
           files: BuildOutput/*
           body: ${{ env.CHANGELOG }}
           tag_name: ${{ env.MOD_VERSION }}
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test
-        run: echo ${{ steps.create_release.outputs.assets }} 
+      - name: Upload to Geode
+        run: |
+          geode index mods update ${{ steps.create_release.outputs.download_url }} ||
+          geode index mods create ${{ steps.create_release.outputs.download_url }}
+
