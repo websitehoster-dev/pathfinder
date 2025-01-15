@@ -38,7 +38,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          files: BuildOutput/*
+          files: BuildOutput/*.geode
           body: ${{ env.CHANGELOG }}
           tag_name: ${{ env.MOD_VERSION }}
           make_latest: true
@@ -47,6 +47,6 @@ jobs:
 
       - name: Upload to Geode
         run: |
-          geode index mods update ${{ steps.create_release.outputs.download_url }} ||
-          geode index mods create ${{ steps.create_release.outputs.download_url }}
+          geode index mods update ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }} ||
+          geode index mods create ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }}
 
