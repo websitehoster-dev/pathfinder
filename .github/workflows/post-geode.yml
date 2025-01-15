@@ -47,6 +47,6 @@ jobs:
 
       - name: Upload to Geode
         run: |
-          geode index mods update ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }} ||
-          geode index mods create ${{ fromJSON(steps.<step-id>.outputs.assets)[0].browser_download_url }}
+          geode index mods update ${{ fromJSON(steps.create_release.outputs.assets)[0].browser_download_url }} ||
+          geode index mods create ${{ fromJSON(steps.create_release.outputs.assets)[0].browser_download_url }}
 
