@@ -3,7 +3,6 @@
 #include <Geode/modify/EditLevelLayer.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
 #include <UIBuilder.hpp>
-#include <TinyNode.hpp>
 #include "pathfinder.hpp"
 #include <future>
 

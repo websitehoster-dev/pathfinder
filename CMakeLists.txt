@@ -23,7 +23,6 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 add_subdirectory(gd-sim)
 
 CPMAddPackage("gh:camila314/UIBuilder#main")
-CPMAddPackage("gh:camila314/TinyGeode#main")
 CPMAddPackage("gh:maxnut/GDReplayFormat#main")
 
 # add custom target to strip binary
@@ -37,4 +36,4 @@ endif()
 
 setup_geode_mod(${PROJECT_NAME})
 target_compile_options(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:-g> $<$<CONFIG:Release>:-O3 -fno-math-errno -fno-trapping-math -fvisibility=hidden -fomit-frame-pointer>)
-target_link_libraries(${PROJECT_NAME} gd-sim UIBuilder TinyGeode libGDR)
+target_link_libraries(${PROJECT_NAME} gd-sim UIBuilder libGDR)
