@@ -105,11 +105,15 @@ void Block::collide(Player& p) const {
 			return;
 	}
 
+
+	bool padHitBefore = (!p.prevPlayer().grounded && p.prevPlayer().velocity <= 0 && p.velocity > 0);
+
 	if (p.innerHitbox().intersects(*this)) {
 		p.dead = true;
-	} else if (p.gravTop(*this) - bottom <= clip && (p.velocity <= 0 || p.gravityPortal)) {
+	} else if (p.gravTop(*this) - bottom <= clip && (padHitBefore || p.velocity <= 0 || p.gravityPortal)) {
 		p.pos.y = p.grav(p.gravTop(*this)) + p.grav(p.size.y / 2);
-		p.grounded = true;
+		if (!padHitBefore)
+			p.grounded = true;
 
 		if (p.vehicle.type == VehicleType::Cube) {
 			if (!p.prevPlayer().grounded) {
