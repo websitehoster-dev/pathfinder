@@ -1,3 +1,10 @@
+# beta 18
+## Fix tons of bugs:
+- Blue portal on floor would kill
+- Landing on right edge of blocks did wrong x-snapping
+- Small cube didn't snap on 90-60 stairs
+- Priority issue when hitting block and orb on the same frame
+
 # beta 17
 - Fix bug where export doesn't show up
 

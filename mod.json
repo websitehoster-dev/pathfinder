@@ -9,7 +9,7 @@
 	"geode": "4.2.0",
 	"name": "Pathfinder",
 	"developer": "camila314",
-	"version": "v1.0.0-beta.17",
+	"version": "v1.0.0-beta.18",
 	"dependencies": [
 		{
 			"id": "geode.node-ids",
@@ -23,13 +23,5 @@
 		]
 	},
 	"description": "Beat levels automatically!",
-	"tags": ["offline", "gameplay", "utility"],
-	"settings": {
-		"debug": {
-			"name": "Enable Debug Mode",
-			"description": "Adds an extra button for further testing of the simulator.",
-			"type": "bool",
-			"default": true
-		}
-	}
+	"tags": ["offline", "gameplay", "utility"]
 }
