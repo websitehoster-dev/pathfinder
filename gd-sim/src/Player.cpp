@@ -79,7 +79,7 @@ void Player::postCollision() {
 		snapData.playerFrame = 0;
 	}
 
-	if (pos.y > 1476.3 || (upsideDown && getBottom() <= floor)) {
+	if (pos.y > 1476.3 || (upsideDown && getBottom() < floor)) {
 		dead = true;
 		return;
 	}
