@@ -58,11 +58,10 @@ void trySnap(Block const& b, Player& p) {
 
 	switch (snapType(diff, p)) {
 		case SnapType::BigStair:
-			if ((!small && held) || onEdge) 
+			if ((!small && held) || snapPlayer.getRight() - snapData.object.getLeft() < 1)
 				p.pos.x = samePos;
-			else {
+			else
 				p.pos.x += p.speed;
-			}
 			break;
 		case SnapType::LittleStair:
 			if (p.speed == 1) {
@@ -108,7 +107,7 @@ void Block::collide(Player& p) const {
 
 	if (p.innerHitbox().intersects(*this)) {
 		p.dead = true;
-	} else if (p.gravTop(*this) - bottom <= clip && (p.velocity <= 0 || p.gravityPortal)){
+	} else if (p.gravTop(*this) - bottom <= clip && (p.velocity <= 0 || p.gravityPortal)) {
 		p.pos.y = p.grav(p.gravTop(*this)) + p.grav(p.size.y / 2);
 		p.grounded = true;
 
