@@ -28,7 +28,7 @@ SnapType snapType(Vec2D const& diff, Player const& p) {
 	if (p.speed == 0 && !p.small) {
 		if (diff == Vec2D(90, 30)) return SnapType::LittleStair;
 	} else if (p.speed == 1) {
-		if (diff == Vec2D(90, p.small ? 30 : 60)) return SnapType::BigStair;
+		if (diff == Vec2D(90, 60) || (p.small && diff == Vec2D(90, 30))) return SnapType::BigStair;
 		if (diff == Vec2D(120, 30) && !p.small) return SnapType::LittleStair;
 		if (diff == Vec2D(150, -30)) return SnapType::DownStair;
 	} else if (p.speed == 2 && !p.small) {
