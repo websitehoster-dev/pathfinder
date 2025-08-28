@@ -26,16 +26,18 @@ VehiclePortal::VehiclePortal(Vec2D size, std::unordered_map<int, std::string>&& 
 
 void VehiclePortal::collide(Player& player) const {
 	EffectObject::collide(player);
-	bool n = false;
+	bool isNew = false;
 
 	if (player.vehicle.type != type) {
+
+		// Going from wave to any other vehicle changes the velocity		
 		if (player.vehicle.type == VehicleType::Wave)
 			player.velocity *= 0.9;
 
 		player.vehicle = Vehicle::from(type);
-		n = true;
+		isNew = true;
 	}
 
 	player.size = Vec2D(30, 30) * (player.small ? 0.6 : 1);
-	player.vehicle.enter(player, this, n);
+	player.vehicle.enter(player, this, isNew);
 }

@@ -7,6 +7,6 @@ struct Hazard : public Object {
 };
 
 struct Sawblade : public Hazard {
-    Sawblade(Vec2D size, std::unordered_map<int, std::string>&& fields);
+    using Hazard::Hazard;
     bool touching(Player const&) const override;
 };

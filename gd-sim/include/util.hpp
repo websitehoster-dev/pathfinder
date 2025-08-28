@@ -38,7 +38,11 @@ struct velocity_map : public std::unordered_map<std::tuple<Args...>, std::vector
     }
 };
 
-
+/**
+ * Using normal sets is extremely bad for performance since we would need to make
+ * a copy for every frame, due it saving all previous states. I wrote this to ensure
+ * that unnecessary copies do not happen if nothing is changed between frames.
+ */
 template <typename T>
 class cow_set {
     std::shared_ptr<std::unordered_set<T>> data;
@@ -94,6 +98,7 @@ public:
     }
 };
 
+/// Combine two values into one for the purposes of switches
 constexpr int case_and(auto a, auto b) {
     return static_cast<int>(a) | (static_cast<int>(b) << 4);
 }

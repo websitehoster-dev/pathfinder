@@ -19,10 +19,12 @@ Orb::Orb(Vec2D size, std::unordered_map<int, std::string>&& fields) : EffectObje
 }
 
 bool Orb::touching(Player const& p) const {
+	// Coyote frame for orbs
 	return EffectObject::touching(p) || EffectObject::touching(p.prevPlayer());
 }
 
 const velocity_map<OrbType, VehicleType, bool> orb_velocities = {
+	//											   slow speed   1x speed    2x speed   3x speed
 	{{OrbType::Yellow, VehicleType::Cube, false}, {573.48,      603.72,     616.68,    606.42}},
 	{{OrbType::Yellow, VehicleType::Cube, true},  {458.784,     482.976,    481.734,   485.136}},
 
@@ -63,12 +65,14 @@ const velocity_map<OrbType, VehicleType, bool> orb_velocities = {
 };
 
 void Orb::collide(Player& p) const {
+	// Orbs are often buffered, but p.buffer will still be true if its not a real buffer
 	if (p.buffer || (p.prevPlayer().buffer && !p.button) || (p.vehicle.type == VehicleType::Ball && p.vehicleBuffer)) {
 		p.buffer = false;
 		p.vehicleBuffer = false;
 
 		EffectObject::collide(p);
 
+		// Wave can't use non-gravity orbs
 		if (p.vehicle.type != VehicleType::Wave) {
 			p.velocity = orb_velocities.get(type, p.vehicle.type, p.small , p.speed);
 			p.grounded = false;
@@ -78,6 +82,7 @@ void Orb::collide(Player& p) const {
 			p.upsideDown = !p.upsideDown;
 		}
 
+		// Clicking on an orb as ball essentially removes the input
 		if (p.vehicle.type == VehicleType::Ball)
 			p.input = false;
 	}

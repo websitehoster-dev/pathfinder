@@ -12,6 +12,7 @@ std::string readFromFile(const std::string& path) {
 int main(int argc, char** argv) {
 	if (argc < 3) {
 		std::cerr << "Must be used by mod!" << std::endl;
+        return 1;
 	}
 
 	std::string levelString = readFromFile(argv[1]);

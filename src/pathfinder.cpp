@@ -25,7 +25,7 @@ struct Level2 : public Level {
 };
 
 bool isLevelEnd(Level2& lvl) {
-	return lvl.latestFrame().pos.x >= lvl.length;
+	return lvl.latestState().pos.x >= lvl.length;
 }
 
 int tryInputs(Level2& lvl, std::set<uint16_t> inputs) {
@@ -41,8 +41,8 @@ int tryInputs(Level2& lvl, std::set<uint16_t> inputs) {
 		lvl.runFrame(lvl.press);
 	}
 	int final = lvl.currentFrame();
-	float lastX = lvl.latestFrame().pos.y;
-	float lastY = lvl.latestFrame().pos.y;
+	float lastX = lvl.latestState().pos.y;
+	float lastY = lvl.latestState().pos.y;
 
 	lvl.rollback(frame);
 	lvl.press = press_before;
@@ -124,7 +124,7 @@ std::vector<uint8_t> pathfind(std::string const& lvlString, std::atomic_bool& st
 		}
 
 		if (callback)
-			callback(std::min((lvl.latestFrame().pos.x / lvl.length) * 100, 100.0f));
+			callback(std::min((lvl.latestState().pos.x / lvl.length) * 100, 100.0f));
 		//std::cout << "\rStatus: " << std::min((lvl.latestFrame().pos.x / lvl.length) * 100, 100.0f) << "%            " << std::flush;
 
 		if (stop)

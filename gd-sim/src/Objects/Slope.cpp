@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <Player.hpp>
 
+/// Slopes are possibly the most complicated object. This is still very unfinished!
 
 Slope::Slope(Vec2D size, std::unordered_map<int, std::string>&& fields) : Block(size, std::move(fields)) {
 	auto rot = stod_def(fields[6].c_str());
@@ -12,7 +13,7 @@ Slope::Slope(Vec2D size, std::unordered_map<int, std::string>&& fields) : Block(
 
 	orientation = rot / 90;
 
-
+	// Slope orientation matters a lot lot
 	if (flipX && flipY)
 		orientation += 2;
 	else if (flipX)
@@ -45,30 +46,37 @@ int Slope::gravOrient(Player const& p) const {
 
 double Slope::angle() const {
 	auto ang = std::atan(size.y / size.x);
-	if (orientation == 1)
+	// Downhill slopes 
+	if (orientation == 1 || orientation == 3)
 		ang = -ang;
 	return ang;
 }
 
 double Slope::expectedY(Player const& p) const {
-	double ydist = (!p.upsideDown * 2 - 1) * p.size.y * sqrt(pow(tan(angle()), 2) + 1) / 2;
+	// I do not fully understand this.
+	double ydist = p.grav(orientation > 1 ? -1 : 1) * p.size.y * sqrt(pow(tan(angle()), 2) + 1) / 2;
 	float posRelative = (size.y / size.x) * (p.pos.x - getLeft());
 
-	if ((angle() > 0) ^ p.upsideDown)
+	// Uphill vs downhill, relative to player gravity
+	if ((angle() > 0) ^ p.upsideDown) {
 		return getBottom() + std::min(posRelative + ydist, size.y + p.size.y / 2.0);
+	}
 	else
 		return getTop() - std::max(posRelative - ydist, -p.size.y / 2.0);
-
 }
 
+/// See Slope.hpp for why this is a separate function
 void Slope::calc(Player& p) const {
-
+	// No slope calculations for you!
 	if (p.vehicle.type == VehicleType::Wave) {
 		p.dead = true;
 		return;
 	}
 
 	if (gravOrient(p) == 0) {
+		// Regular uphill slope
+
+		// Coyote frame for slopes must be taken into account
 		if (!touching(p)) {
 			p.actions.push_back(+[](Player& p) {
 				p.slopeData.slope = {};
@@ -77,6 +85,7 @@ void Slope::calc(Player& p) const {
 			});
 		}
 
+		//  If player isn't on top already, use expectedY to snap player
 		if (p.gravBottom(p.prevPlayer()) != getTop()) {
 			if (p.upsideDown) {
 				p.pos.y = std::min((double)p.pos.y, expectedY(p));
@@ -85,18 +94,21 @@ void Slope::calc(Player& p) const {
 			}
 		}
 
+		// When you're on top of the slope you will be ejected
 		if (p.gravBottom(p) == p.gravTop(*this) || (p.gravBottom(p) > p.gravTop(*this) && p.snapData.playerFrame > 0)) {
+			
+			// Rob's algorithm for slope ejection velocity. So goofy!
 			double vel = 0.9 * std::min(1.12 / angle(), 1.54) * (size.y * player_speeds[p.speed] / size.x);
-
 			double time = std::clamp(10 * (p.timeElapsed - p.slopeData.elapsed), 0.4, 1.0);
 
 			if (p.vehicle.type == VehicleType::Ball)
 				vel *= 0.75;
 			if (p.vehicle.type == VehicleType::Ufo)
-				vel *= 0.7499;
+				vel *= 0.7499; // I have no justification for this. It just works
 
 			vel *= time;
 
+			// Gotta eject on the next frame
 			p.actions.push_back([vel](Player& p) {
 				p.velocity = vel;
 
@@ -106,6 +118,9 @@ void Slope::calc(Player& p) const {
 			});
 		}
 	} else if (gravOrient(p) == 1) {
+		// Downhill regular slope
+
+		// Velocity up means you're not on slope anymore
 		if (p.velocity > 0) {
 			p.actions.push_back(+[](Player& p) {
 				p.slopeData.slope = {};
@@ -114,11 +129,14 @@ void Slope::calc(Player& p) const {
 			});
 		}
 
+		// Snap to expected Y just like uphill
 		if (p.gravBottom(p.prevPlayer()) != getTop() || p.slopeData.snapDown) {
 			p.pos.y = std::max(std::min((double)p.pos.y, expectedY(p)), pos.y - p.size.y / 2.);
 		}
 
+		// Ejections, but downwards!
 		if (p.getTop() <= pos.y) {
+			// TODO use the actual algorithm because there are probably wrong
 			static double falls[4] = {
 				226.044054,
 				280.422108,
@@ -139,20 +157,32 @@ void Slope::calc(Player& p) const {
 }
 
 void Slope::collide(Player& p) const {
+	// When you hit a downhill slope before your center hits the leftmost side, it's treated like a block
 	if (!p.prevPlayer().slopeData.slope && orientation == 1 && p.pos.x - getLeft() < 0 && p.velocity <= 0) {
 		p.pos.y = getTop() + p.size.y / 2;
 		p.grounded = true;
 		return;
 	}
 
+	// Current (or previous) slope
 	auto pSlope = p.slopeData.slope;
+
+	/*
+		Ff stored slope data is current slope, or there is no stored,
+		or you're no longer touching the previous slope.
+	*/
 	if (!pSlope || !pSlope->touching(p) || (pSlope->gravOrient(p) == gravOrient(p) && p.grav(expectedY(p)) > p.grav(pSlope->expectedY(p))) || pSlope->id == id) {
 		double pAngle = atan((p.velocity * p.dt) / (player_speeds[p.speed] * p.dt));
 
 		bool hasSlope = p.prevPlayer().slopeData.slope.has_value();
+
+		//  Is player traveling at the right angle to contact the slope
 		bool projectedHit = orientation == 1 ? (pAngle * 5.0 <= angle()) : (pAngle <= angle());
 		bool clip = p.grav(expectedY(p)) >= p.grav(p.pos.y);
+
+		// Downhill slopes snap you down
 		bool snapDown = orientation == 1 && p.velocity > 0 && p.pos.x - getLeft() > 0;
+
 		if (hasSlope ? p.velocity <= 0 : projectedHit & clip || snapDown) {
 			p.grounded = true;
 			p.slopeData.slope = *this;
@@ -169,15 +199,20 @@ void Slope::collide(Player& p) const {
 	}
 }
 
+void SlopeHazard::collide(Player& p) const {
+	p.dead = true;
+}
+double SlopeHazard::expectedY(Player const& p) const {
+	// Hazardous slopes have slightly larger hitboxes
+	return Slope::expectedY(p) + (orientation > 1 ? -4 : 4);
+}
+
 bool Slope::touching(Player const& p) const {
 	if (!Block::touching(p)) {
 		return false;
 	}
 
-	//std::cout << "GRAV " << gravOrient(p) << std::endl;
-
-	//if (p.upsideDown) return false;
-
+	// TODO finish the last two.
 	switch (gravOrient(p)) {
 		case 0:
 			return p.grav(expectedY(p)) >= p.grav(p.pos.y);
@@ -186,7 +221,7 @@ bool Slope::touching(Player const& p) const {
 		case 2:
 			return p.grav(expectedY(p)) <= p.grav(p.pos.y);//-(frontBottom.x - pos.x >= frontBottom.y - pos.y);
 		case 3:
-			return false;//frontBottom.x - pos.x <= frontBottom.y - pos.y;
+			return p.grav(expectedY(p)) <= p.grav(p.pos.y);//frontBottom.x - pos.x <= frontBottom.y - pos.y;
 		default:
 			return false;
 	}

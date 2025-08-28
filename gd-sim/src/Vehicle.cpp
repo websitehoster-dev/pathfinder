@@ -5,6 +5,18 @@
 #include <Slope.hpp>
 #include <cmath>
 
+/*
+	For ship and ufo, there are two sets of acceleration values depending on the current
+	velocity. If the current velocity is higher than one of these thresholds
+	(indexed by speed) then a lighter acceleration would be used.
+*/
+constexpr double velocity_thresholds[] = {
+	103.485494592,
+	101.541492,
+	103.377492,
+	103.809492
+};
+
 Vehicle cube() {
 	Vehicle v;
 	 v.type = VehicleType::Cube;
@@ -31,6 +43,7 @@ Vehicle cube() {
 	};
 
 	v.update = +[](Player& p) {
+		// Fall speeds
 		static double accelerations[] = {
 			-2747.52,
 			-2794.1082, 
@@ -39,11 +52,12 @@ Vehicle cube() {
 		};
 		p.acceleration = accelerations[p.speed];
 
+		// Strange hardcode
 		if (p.gravityPortal && p.grav(p.velocity) > 350 && p.speed > 1) {
 			p.acceleration -= 6.48;
 		}
 
-		//TODO this is bad
+		//TODO add rotation
 		p.rotation = 0;
 		p.rotVelocity = 0;//415.3848;
 
@@ -73,6 +87,7 @@ Vehicle cube() {
 				606.42,
 			};
 
+			// On slopes, you jump higher depending on how long you've been on the slope
 			if (p.slopeData.slope && p.slopeData.slope->orientation == 0) {
 				auto time = std::clamp(10 * (p.timeElapsed - p.slopeData.elapsed), 0.4, 1.0);
 
@@ -114,7 +129,10 @@ Vehicle ship() {
 	};
 
 	v.clamp = +[](Player& p) {
+		// Can't buffer clicks on ship
 		p.buffer = false;
+
+		// Max velocity
 		p.velocity = std::clamp(p.velocity, 
 			p.small ? -406.566 : -345.6,
 			p.small ? 508.248 : 432.0
@@ -136,15 +154,13 @@ Vehicle ship() {
 		if (p.grounded)
 			p.setVelocity(0, !p.input);
 
-		constexpr double velcap = 101.541492; // formerly 103.485492
-
 		if (p.input) {
-			if (p.velocity <= p.grav(velcap))
+			if (p.velocity <= p.grav(velocity_thresholds[p.speed]))
 				p.acceleration = p.small ? 1643.5872 : 1397.0491;
 			else
 				p.acceleration = p.small ? 1314.86976 : 1117.64328;
 		} else {
-			if (p.velocity >= p.grav(velcap))
+			if (p.velocity >= p.grav(velocity_thresholds[p.speed]))
 				p.acceleration = p.small ? -1577.85408 : -1341.1719;
 			else
 				p.acceleration = p.small ? -1051.8984 : -894.11464;
@@ -272,7 +288,7 @@ Vehicle ufo() {
 			p.buffer = false;
 			p.grounded = false;
 		} else {
-			if (p.velocity > p.grav(103.485492)) {
+			if (p.velocity > p.grav(velocity_thresholds[p.speed])) {
 				p.acceleration = p.small ? -1969.92 : -1671.84;
 			} else {
 				p.acceleration = p.small ? -1308.96 : -1114.56;

@@ -190,13 +190,13 @@ class $modify(GJBaseGameLayer) {
 		if (true) {
 			GJBaseGameLayer::processCommands(1 / 240.);
 
-			if (PlayLayer::get()) {
+			if (/*PlayLayer::get()*/ true) {
 				static double prevVel = 0;
 				static double prevX = 0;
 				static double prevXVel = 0;	
 
 				double vel = m_player1->m_yVelocity * 60 * 0.9 * (m_player1->m_isUpsideDown ? -1 : 1);
-				log::info("{}", reference_cast<long>(m_player1->m_yVelocity));
+				//log::info("{}", reference_cast<long>(m_player1->m_yVelocity));
 				double xvel = (m_player1->getPositionX() - prevX);
 
 				auto dat = fmt::format("Frame {} X {:.8f} Y {:.8f} Vel {:.8f} Accel {:.8f}", frames, m_player1->getPositionX(), m_player1->getPositionY() - 105, vel, (vel - prevVel) * 240);

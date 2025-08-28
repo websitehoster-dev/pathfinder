@@ -2,6 +2,7 @@
 #include <EffectObject.hpp>
 #include <Vehicle.hpp>
 
+
 struct VehiclePortal : public EffectObject {
     VehicleType type;
     VehiclePortal(Vec2D size, std::unordered_map<int, std::string>&& fields);

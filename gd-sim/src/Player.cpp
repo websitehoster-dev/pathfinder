@@ -14,6 +14,8 @@ Entity Player::unrotatedHitbox() const {
 
 void Player::setVelocity(double v, bool override) {
 	velocityOverride = override;
+
+	// Being small commonly means velocity is 4/5 the original velocity.
 	velocity = v * (small ? 0.8 : 1);
 
 	if (v != 0)
@@ -28,14 +30,17 @@ Player const* Player::nextPlayer() const {
 	return level->currentFrame() <= frame ? nullptr : &level->getState(frame + 1);
 }
 
+/**
+ * In Geometry Dash, velocity is stored as 1/54 of distance per second.
+ * It is also rounded to the nearest hundredth after (almost) every operation.
+ * This function accounts for that rounding
+ */
 double roundVel(double velocity, bool upsideDown) {
 	double nVel = velocity / 54.0 * (upsideDown * 2 - 1);
-	//std::cout << "pre floor " << nVel << std::endl;
 	double floored = (int)nVel;
 	if (nVel != floored) {
 		nVel = (double)std::round((nVel - floored) * 1000.0) / 1000.0 + floored;
 	}
-	//std::cout << "post floor " << nVel << std::endl;
 	return nVel * 54.0 * (upsideDown * 2 - 1);
 }
 
@@ -59,16 +64,16 @@ void Player::preCollision(bool pressed) {
 		i(*this);
 	actions.clear();
 
+	// Downhill slopes snap you automatically
 	if (slopeData.slope && slopeData.slope->orientation == 1) {
 		grounded = true;
 	}
 }
 
-bool unaltered(Player const& p) {
-	return p.prevPlayer().gravBottom(p) > p.prevPlayer().gravFloor() && p.upsideDown == p.prevPlayer().upsideDown;	
-}
+
 
 void Player::postCollision() {
+	// Size portal only affects hitbox size at the end of frame
 	if (small != prevPlayer().small) {
 		size = small ? (size * 0.6) : (size / 0.6);
 	}
@@ -79,16 +84,19 @@ void Player::postCollision() {
 		snapData.playerFrame = 0;
 	}
 
+	// Fell through ceiling, or hit floor
 	if (pos.y > 1476.3 || (upsideDown && getBottom() < floor)) {
 		dead = true;
 		return;
 	}
 
-	if (unaltered(*this) && !grounded && velocity <= 0) {
+	// Coyote frames 
+	if (prevPlayer().gravBottom(*this) > prevPlayer().gravFloor() && upsideDown == prevPlayer().upsideDown && !grounded && velocity <= 0) {
 		if (prevPlayer().grounded && !prevPlayer().input)
 			coyoteFrames = 0;
 		coyoteFrames++;
 	} else {
+		// Nothing will check for coyote frames this high
 		coyoteFrames = INT_MAX;
 	}
 
@@ -96,9 +104,10 @@ void Player::postCollision() {
 
 	if (!velocityOverride) {
 		double newVel = velocity + acceleration * dt;
+
+		// Player will fall off blocks a frame faster than expected.
 		if (!grounded && prevPlayer().grounded && ((!input && (prevPlayer().button || !button)) || buffer) && prevPlayer().gravBottom(*this) > prevPlayer().gravFloor() && size == prevPlayer().size) {
 			pos.y += roundVel(prevPlayer().grav(prevPlayer().acceleration) * dt, prevPlayer().upsideDown) * dt;
-			//std::cout << "big news\n";
 
 			if (gravityPortal && vehicle.type != VehicleType::Ship)
 				newVel = -newVel;
@@ -109,17 +118,14 @@ void Player::postCollision() {
 		velocity = newVel;
 	}
 
-	/*int sign = velocity > 0 ? 1 : -1;
-	double nVel = velocity / 54. * sign;
-	nVel = std::floor(nVel * 1000.0) / 1000.0;
-	velocity = nVel * 54. * sign;*/
-
+	// Ball mvoements are not rounded in GD. Probably a bug!
 	if (!(vehicle.type == VehicleType::Ball && input == false && prevPlayer().input == true && button == true))
 		velocity = roundVel(velocity, upsideDown);
 
 	if (slopeData.slope)
 		slopeData.slope->calc(*this);
 
+	// Ensure the player hasn't gone beyond the bounds of the vehicle
 	vehicle.clamp(*this);
 }
 

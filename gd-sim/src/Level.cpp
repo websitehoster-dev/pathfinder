@@ -12,6 +12,7 @@ void Level::initLevelSettings(std::string const& lvlSettings, Player& player) {
 		obj[k] = v;
 	}
 
+	// Helper to make a default value for nonexistant keys
 	auto get_or = [&obj](std::string const& key, std::string const& def) {
 		if (auto it = obj.find(key); it != obj.end())
 			return it->second.c_str();
@@ -19,6 +20,8 @@ void Level::initLevelSettings(std::string const& lvlSettings, Player& player) {
 	};
 
 	player.speed = atoi(get_or("kA4", "0"));
+
+	// Robtop stores 1x speed as 0 and slow speed as 1. Very silly
 	if (player.speed == 0)
 		player.speed = 1;
 	else if (player.speed == 1)
@@ -30,15 +33,17 @@ void Level::initLevelSettings(std::string const& lvlSettings, Player& player) {
 }
 
 Level::Level(std::string const& lvlString) {
-	// split by ';'
+	// Split by ';' to parse level string
 	std::stringstream ss(lvlString);
 	std::string objstr;
 	bool first = true;
+
+	// First player state
 	auto player = Player();
 
 	while (std::getline(ss, objstr, ';')) {
+		// First entry is level settings object
 		if (first) {
-			// level settings
 			initLevelSettings(objstr, player);
 			first = false;
 			continue;
@@ -56,8 +61,11 @@ Level::Level(std::string const& lvlString) {
 
 		if (auto ob_o = Object::create(std::move(obj))) {
 			auto ob = ob_o.value();
+
+			// Unique ID
 			ob->id = objectCount++;
 
+			// Sections are divided by x position in increments of 100
 			size_t sectionPos = std::max(.0f, ob->pos.x / sectionSize);
 			if (sectionPos >= sections.size())
 				sections.resize(sectionPos + 1);
@@ -74,24 +82,28 @@ Level::Level(std::string const& lvlString) {
 
 Player& Level::runFrame(bool pressed, float dt) {
 	Player p = gameStates.back();
+
+	// Can't play if you're dead
 	if (p.dead)
 		return gameStates.back();
 
 	p.dt = dt;
 	p.preCollision(pressed);
 
+	// Objects from previous, current, and next section are all collision tested
 	size_t sectionIdx = std::min(std::max(0, (int)(p.pos.x / sectionSize)), (int)sections.size() - 1);
 	auto prevSection = &sections[sectionIdx == 0 ? 0 : sectionIdx - 1];
 	auto currSection = &sections[sectionIdx];
 	auto nextSection = &sections[sectionIdx + 1 >= sections.size() - 1 ? sections.size() - 1 : sectionIdx + 1];
 
-	
+	// If at start or end of level, previous/next section is invalid so don't use it
 	std::vector<ObjectContainer>* sections[3] = { prevSection, nullptr, nullptr };
 	if (&currSection != &prevSection)
 		sections[1] = currSection;
 	if (&nextSection != &currSection)
 		sections[2] = nextSection;
 
+	// Blocks are hazards processed separately
 	std::vector<ObjectContainer> blocks;
 	std::vector<ObjectContainer> hazards;
 	blocks.reserve(100);
@@ -114,6 +126,7 @@ Player& Level::runFrame(bool pressed, float dt) {
 		}
 	}
 
+	// Blocks are processed in descending order
 	for (int i = blocks.size() - 1; i >= 0; --i) {
 		if (p.dead) break;
 		auto& b = blocks[i];
@@ -128,6 +141,7 @@ Player& Level::runFrame(bool pressed, float dt) {
 		if (h->touching(p)) {
 			++numCollisions;
 			h->collide(p);
+			
 		}
 	}
 
@@ -166,6 +180,6 @@ Player const& Level::getState(int frame) const {
 	return gameStates[frame - 1];
 }
 
-Player& Level::latestFrame() {
+Player& Level::latestState() {
 	return gameStates.back();
 }

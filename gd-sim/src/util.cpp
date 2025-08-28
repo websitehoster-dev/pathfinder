@@ -16,7 +16,7 @@ Vec2D Vec2D::rotate(float angle, Vec2D const& pivot) const {
     return tmp;
 }
 
-
+// Very complicated (but very fast) way to check intersection
 bool intersectOneWay(Entity const& a, Entity const& b) {
     float big = std::max(a.size.x, a.size.y) + std::max(b.size.x, b.size.y);
     if (std::abs(a.pos.x - b.pos.x) > big || std::abs(a.pos.y - b.pos.y) > big) {
