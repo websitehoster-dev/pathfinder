@@ -237,11 +237,21 @@ Vehicle ball() {
 				-181.92601
 			};
 
+			double newVel = jumpHeights[p.speed];
+
+			if (p.slopeData.slope && p.slopeData.slope->orientation == 0) {
+				auto slope = p.slopeData.slope;
+
+				// Ball doesn't round, leading to very silly results
+				newVel -= p.grav(0.300000001 * roundVel(0.16875 * std::min(1.12 / slope->angle(), 1.54) * (slope->size.y * player_speeds[p.speed] / slope->size.x), p.upsideDown));
+			}
+
 			p.upsideDown = !p.upsideDown;
-			p.setVelocity(jumpHeights[p.speed], p.prevPlayer().buffer || p.vehicleBuffer);
+			p.setVelocity(newVel, p.prevPlayer().buffer || p.vehicleBuffer);
 			p.vehicleBuffer = false;
 			p.buffer = false;
 			p.input = false;
+			p.roundVelocity = false;
 		}
 	};
 

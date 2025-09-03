@@ -29,7 +29,7 @@ const velocity_map<PadType, VehicleType, bool> pad_velocities = {
 	{{PadType::Yellow, VehicleType::Cube, false}, {864,         864,        864}},
 	{{PadType::Yellow, VehicleType::Cube, true},  {691.2,       691.2,      691.2}},
 
-	{{PadType::Yellow, VehicleType::Ship, false}, {432,         432,        432}},
+	{{PadType::Yellow, VehicleType::Ship, false}, {864,         864,        864}},
 	{{PadType::Yellow, VehicleType::Ship, true},  {691.2,       691.2,      691.2}},
 
 	{{PadType::Yellow, VehicleType::Ball, false}, {518.4,  518.4,    518.4}},

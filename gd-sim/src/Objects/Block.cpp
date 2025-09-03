@@ -163,7 +163,7 @@ void Block::collide(Player& p) const {
 	} else {
 		// Ship and ufo can hit the ceiling of a block without dying
 		if (p.vehicle.type == VehicleType::Ship || p.vehicle.type == VehicleType::Ufo) {
-			if (p.gravTop(p) - p.gravBottom(*this) <= clip && p.velocity > 0) {
+			if (p.gravTop(p) - p.gravBottom(*this) <= clip - 1 && p.velocity > 0) {
 				p.pos.y = p.grav(p.gravBottom(*this)) - p.grav(p.size.y / 2);
 				p.velocity = 0;
 			}

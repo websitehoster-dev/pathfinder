@@ -54,11 +54,11 @@ double Slope::angle() const {
 
 double Slope::expectedY(Player const& p) const {
 	// I do not fully understand this.
-	double ydist = p.grav(orientation > 1 ? -1 : 1) * p.size.y * sqrt(pow(tan(angle()), 2) + 1) / 2;
+	double ydist = p.prevPlayer().grav(orientation > 1 ? -1 : 1) * p.size.y * sqrt(pow(tan(angle()), 2) + 1) / 2;
 	float posRelative = (size.y / size.x) * (p.pos.x - getLeft());
 
 	// Uphill vs downhill, relative to player gravity
-	if ((angle() > 0) ^ p.upsideDown) {
+	if ((angle() > 0) ^ p.prevPlayer().upsideDown) {
 		return getBottom() + std::min(posRelative + ydist, size.y + p.size.y / 2.0);
 	}
 	else
@@ -73,7 +73,7 @@ void Slope::calc(Player& p) const {
 		return;
 	}
 
-	if (gravOrient(p) == 0) {
+	if (gravOrient(p.prevPlayer()) == 0) {
 		// Regular uphill slope
 
 		// Coyote frame for slopes must be taken into account
@@ -87,7 +87,7 @@ void Slope::calc(Player& p) const {
 
 		//  If player isn't on top already, use expectedY to snap player
 		if (p.gravBottom(p.prevPlayer()) != getTop()) {
-			if (p.upsideDown) {
+			if (p.prevPlayer().upsideDown) {
 				p.pos.y = std::min((double)p.pos.y, expectedY(p));
 			} else {
 				p.pos.y = std::max((double)p.pos.y, expectedY(p));
@@ -117,7 +117,7 @@ void Slope::calc(Player& p) const {
 				p.slopeData.snapDown = false;
 			});
 		}
-	} else if (gravOrient(p) == 1) {
+	} else if (gravOrient(p.prevPlayer()) == 1) {
 		// Downhill regular slope
 
 		// Velocity up means you're not on slope anymore
@@ -153,6 +153,14 @@ void Slope::calc(Player& p) const {
 				p.slopeData.snapDown = false;
 			});
 		}
+	} else {
+		if (!touching(p)) {
+			p.actions.push_back(+[](Player& p) {
+				p.slopeData.slope = {};
+				p.slopeData.elapsed = 0.0;
+				p.slopeData.snapDown = false;
+			});
+		}
 	}
 }
 
@@ -168,7 +176,7 @@ void Slope::collide(Player& p) const {
 	auto pSlope = p.slopeData.slope;
 
 	/*
-		Ff stored slope data is current slope, or there is no stored,
+		If stored slope data is current slope, or there is no stored,
 		or you're no longer touching the previous slope.
 	*/
 	if (!pSlope || !pSlope->touching(p) || (pSlope->gravOrient(p) == gravOrient(p) && p.grav(expectedY(p)) > p.grav(pSlope->expectedY(p))) || pSlope->id == id) {

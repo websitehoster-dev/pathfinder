@@ -1,3 +1,8 @@
+# beta 20
+
+- Lots of slope fixes
+- Ship hitbox fixes
+
 # beta 19
 
 - Fix ship accelerations

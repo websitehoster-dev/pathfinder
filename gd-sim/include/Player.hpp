@@ -17,6 +17,8 @@ inline double player_speeds[4] = {
 	468.0001388338566
 };
 
+double roundVel(double velocity, bool upsideDown);
+
 struct Object;
 class Level;
 struct Slope;
@@ -95,6 +97,9 @@ struct Player : public Entity {
 
 	/// Entering a gravity portal can cause the next frame to have certain edge cases
 	bool gravityPortal;
+
+	/// Whether velocity at the end of the frame is to be rounded (typically used by ball)
+	bool roundVelocity;
 
 	Player();
 
